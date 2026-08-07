@@ -1,0 +1,72 @@
+{
+  "family": "fikom-backend",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "executionRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/fikom-ecs-execution-role",
+  "taskRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/fikom-ecs-task-role",
+  "containerDefinitions": [
+    {
+      "name": "fikom-backend",
+      "image": "<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/fikom-backend:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 4000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "HOST", "value": "0.0.0.0" },
+        { "name": "PORT", "value": "4000" },
+        { "name": "TZ", "value": "Asia/Jakarta" },
+        { "name": "CORS_ORIGIN", "value": "https://asal.net" },
+        { "name": "JWT_EXPIRES_IN", "value": "12h" },
+        { "name": "BCRYPT_ROUNDS", "value": "12" },
+        { "name": "DATABASE_HOST", "value": "202.147.2.18" },
+        { "name": "DATABASE_PORT", "value": "5432" },
+        { "name": "DATABASE_NAME", "value": "asaldb" },
+        { "name": "DATABASE_USERNAME", "value": "asaladmin" },
+        { "name": "DATABASE_SSL", "value": "false" },
+        { "name": "STORAGE_DRIVER", "value": "s3" },
+        { "name": "AWS_REGION", "value": "<REGION>" },
+        { "name": "S3_BUCKET", "value": "fikom-uploads" },
+        { "name": "S3_SIGNED_URL_TTL", "value": "3600" }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:fikom/DATABASE_PASSWORD-XXXXXX"
+        },
+        {
+          "name": "JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:fikom/JWT_SECRET-XXXXXX"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/fikom-backend",
+          "awslogs-region": "<REGION>",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:'+(process.env.PORT||4000)+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 15
+      }
+    }
+  ]
+}

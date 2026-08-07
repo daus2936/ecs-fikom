@@ -1,0 +1,68 @@
+# ============================================================
+# Node / npm
+# ============================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================================================
+# Build output
+# ============================================================
+dist/
+build/
+*.tsbuildinfo
+
+# ============================================================
+# Environment variables — JANGAN commit kredensial
+# .env.example boleh di-commit (sudah dikecualikan dgn !)
+# ============================================================
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ============================================================
+# Logs
+# ============================================================
+*.log
+logs/
+
+# ============================================================
+# OS-specific
+# ============================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# ============================================================
+# IDE / Editor
+# ============================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ============================================================
+# Test coverage
+# ============================================================
+coverage/
+.nyc_output/
+
+# ============================================================
+# Backend uploads — track folder structure, IGNORE content
+# Folder uploads dibuat otomatis oleh server.js saat start.
+# .gitkeep menjaga struktur folder di git supaya repo
+# tetap "siap jalan" tanpa harus mkdir manual setelah clone.
+# ============================================================
+backend/uploads/*
+!backend/uploads/.gitkeep
+!backend/uploads/saldo-bank/
+backend/uploads/saldo-bank/*
+!backend/uploads/saldo-bank/.gitkeep
